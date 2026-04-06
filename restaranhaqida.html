@@ -1,0 +1,1648 @@
+<!doctype html>
+<html lang="uz">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>O'zbegim Milliy Taomlari – RestoBest</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+            rel="stylesheet"
+        />
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                            display: ["Playfair Display", "serif"],
+                        },
+                        colors: {
+                            brand: {
+                                50: "#fff5ee",
+                                100: "#ffe8d5",
+                                200: "#ffd0aa",
+                                300: "#ffb07a",
+                                400: "#ff8544",
+                                500: "#ff6a1f",
+                                600: "#f04f00",
+                                700: "#c73d00",
+                                800: "#9e3100",
+                                900: "#7d2a00",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Plus Jakarta Sans", sans-serif;
+            }
+
+            .nav-link {
+                position: relative;
+            }
+            .nav-link::after {
+                content: "";
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: #ff6a1f;
+                transition: width 0.25s ease;
+            }
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            @keyframes fadeUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(14px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .fade-up {
+                animation: fadeUp 0.4s ease both;
+            }
+
+            /* gallery */
+            .gal-grid {
+                display: grid;
+                grid-template-columns: 1.4fr 1fr;
+                grid-template-rows: 1fr 1fr;
+                gap: 4px;
+                height: 320px;
+                border-radius: 16px;
+                overflow: hidden;
+            }
+            .gal-main {
+                grid-row: 1/3;
+            }
+            @media (max-width: 639px) {
+                .gal-grid {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 200px 100px 100px;
+                    height: auto;
+                }
+                .gal-main {
+                    grid-row: 1;
+                }
+            }
+
+            /* tab */
+            .tab-btn {
+                position: relative;
+                padding-bottom: 10px;
+                transition: color 0.2s;
+                cursor: pointer;
+            }
+            .tab-btn::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #ff6a1f;
+                border-radius: 2px;
+                transform: scaleX(0);
+                transition: transform 0.25s ease;
+            }
+            .tab-btn.active {
+                color: #ff6a1f;
+                font-weight: 700;
+            }
+            .tab-btn.active::after {
+                transform: scaleX(1);
+            }
+            .tab-panel {
+                display: none;
+            }
+            .tab-panel.active {
+                display: block;
+                animation: fadeUp 0.35s ease both;
+            }
+
+            /* food card */
+            .food-card {
+                transition:
+                    box-shadow 0.25s,
+                    transform 0.25s;
+            }
+            .food-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.09);
+            }
+
+            /* sticky booking */
+            @media (min-width: 1024px) {
+                .booking-sticky {
+                    position: sticky;
+                    top: 80px;
+                }
+            }
+
+            /* drawer */
+            #drawer-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.35);
+                z-index: 99;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            #drawer-overlay.open {
+                opacity: 1;
+                pointer-events: all;
+            }
+            #mobile-drawer {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 270px;
+                background: #fff;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+                display: flex;
+                flex-direction: column;
+            }
+            #mobile-drawer.open {
+                transform: translateX(0);
+            }
+
+            select {
+                -webkit-appearance: none;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 24 24' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+            }
+
+            @keyframes badgePulse {
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0 rgba(255, 106, 31, 0.35);
+                }
+                50% {
+                    box-shadow: 0 0 0 6px rgba(255, 106, 31, 0);
+                }
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 text-gray-800 min-h-screen">
+        <!-- NAVBAR -->
+        <header
+            class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm"
+        >
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center gap-3">
+                        <button
+                            id="hamburger"
+                            class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
+                            </svg>
+                        </button>
+                        <a href="#" class="flex items-center gap-2 group">
+                            <div
+                                class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform"
+                            >
+                                <svg
+                                    class="w-4 h-4 text-white"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 6v6l4 2"
+                                    />
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="9"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                    />
+                                </svg>
+                            </div>
+                            <span class="text-xl font-extrabold tracking-tight"
+                                ><span class="text-brand-500">Resto</span
+                                ><span class="text-gray-800">Best</span></span
+                            >
+                        </a>
+                    </div>
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a
+                            href="Asosiy.html"
+                            class="nav-link flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-brand-500 transition-colors"
+                            ><svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                /></svg>Bosh</a>
+                        <a
+                            href="restoranlar.html"
+                            class="nav-link flex items-center gap-1.5 text-sm font-semibold text-brand-500"
+                            ><svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M3 6h18M3 12h18M3 18h18" /></svg>
+                                Restoranlar
+                            </a>
+
+                        <a
+                            href="#"
+                            class="nav-link flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-brand-500 transition-colors"
+                            ><svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                /></svg>
+                                Aloqa
+                            </a>
+
+                        <a
+                            href="#"
+                            class="nav-link flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-brand-500 transition-colors"
+                            ><svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                /></svg>
+                                Bronlarim
+                            </a>
+                    </nav>
+                    <div class="hidden md:flex items-center gap-3">
+                        <button
+                            class="px-5 py-2 rounded-lg text-sm font-semibold border-2 border-gray-200 hover:border-brand-400 hover:text-brand-500 transition-all"
+                        >
+                            Kirish
+                        </button>
+                        <button
+                            class="px-5 py-2 rounded-lg text-sm font-semibold bg-brand-500 text-white hover:bg-brand-600 shadow-md transition-all active:scale-95"
+                        >
+                            Ro'yxat
+                        </button>
+                    </div>
+                    <div class="flex md:hidden items-center gap-2">
+                        <button
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold border-2 border-gray-200"
+                        >
+                            Kirish
+                        </button>
+                        <button
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white shadow-sm"
+                        >
+                            Ro'yxat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- DRAWER -->
+        <div id="drawer-overlay"></div>
+        <div id="mobile-drawer">
+            <div
+                class="flex items-center justify-between px-5 h-16 border-b border-gray-100 shrink-0"
+            >
+                <a href="#" class="flex items-center gap-2">
+                    <div
+                        class="w-7 h-7 bg-brand-500 rounded-lg flex items-center justify-center shadow-md"
+                    >
+                        <svg
+                            class="w-3.5 h-3.5 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 6v6l4 2"
+                            />
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="9"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                            />
+                        </svg>
+                    </div>
+                    <span class="text-lg font-extrabold"
+                        ><span class="text-brand-500">Resto</span
+                        ><span class="text-gray-800">Best</span></span
+                    >
+                </a>
+                <button
+                    id="drawer-close"
+                    class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"
+                >
+                    <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+            </div>
+            <nav class="flex flex-col gap-1 p-4 flex-1">
+                <a
+                    href="Asosiy.html"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-500"
+                    >🏠 Bosh</a
+                >
+                <a
+                    href="restoranlar.html"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-brand-500 bg-brand-50"
+                    >🍽️ Restoranlar</a
+                >
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-500"
+                    >📞 Aloqa</a
+                >
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-500"
+                    >📅 Bronlarim</a
+                >
+            </nav>
+            <div
+                class="p-4 border-t border-gray-100 flex flex-col gap-2 shrink-0"
+            >
+                <button
+                    class="w-full py-2.5 rounded-xl text-sm font-semibold border-2 border-gray-200 hover:border-brand-400"
+                >
+                    Kirish
+                </button>
+                <button
+                    class="w-full py-2.5 rounded-xl text-sm font-semibold bg-brand-500 text-white hover:bg-brand-600"
+                >
+                    Ro'yxat
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <!-- Top bar: back + actions -->
+            <div class="flex items-center justify-between mb-5">
+                <a
+                    href="#"
+                    class="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand-500 transition-colors group"
+                >
+                    <span
+                        class="w-8 h-8 flex items-center justify-center rounded-xl border-2 border-gray-200 group-hover:border-brand-400 transition-colors"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+                    </span>
+                    <span class="hidden sm:block">
+                        <span
+                            class="block text-xs text-gray-400 font-normal leading-none"
+                            >Restoran profili</span
+                        >
+                        <span
+                            class="block font-semibold text-gray-700 text-sm leading-snug"
+                            >O'zbegim Milliy Taomlari</span
+                        >
+                    </span>
+                </a>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-gray-200 hover:border-brand-400 hover:text-brand-500 text-gray-400 transition-all"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                            />
+                        </svg>
+                    </button>
+                    <button
+                        id="fav-btn"
+                        class="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-gray-200 hover:border-red-300 text-gray-400 transition-all"
+                    >
+                        <svg
+                            id="fav-icon"
+                            class="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                            />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GALLERY -->
+            <div class="gal-grid mb-7 fade-up">
+                <div
+                    class="gal-main relative group overflow-hidden cursor-pointer"
+                >
+                    <img
+                        src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=800&q=80"
+                        alt="main"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                </div>
+                <div class="relative group overflow-hidden cursor-pointer">
+                    <img
+                        src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=500&q=80"
+                        alt="staff"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                </div>
+                <div class="relative group overflow-hidden cursor-pointer">
+                    <img
+                        src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80"
+                        alt="interior"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div
+                        class="absolute inset-0 bg-black/55 flex flex-col items-center justify-center gap-1 opacity-0 group-hover:opacity-0"
+                        style="opacity: 1"
+                    >
+                        <svg
+                            class="w-5 h-5 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect
+                                x="3"
+                                y="3"
+                                width="18"
+                                height="18"
+                                rx="2"
+                                ry="2"
+                            />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                        <span class="text-white text-sm font-bold"
+                            >+12 foto</span
+                        >
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1.5"
+                    >
+                        <svg
+                            class="w-5 h-5 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                        <span class="text-white text-sm font-bold"
+                            >+12 foto</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- LEFT -->
+                <div class="flex-1 min-w-0 space-y-5">
+                    <!-- Info card -->
+                    <div
+                        class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 fade-up"
+                        style="animation-delay: 0.05s"
+                    >
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-start justify-between gap-5"
+                        >
+                            <div class="flex-1">
+                                <div
+                                    class="flex items-center flex-wrap gap-2 mb-3"
+                                >
+                                    <h1
+                                        class="text-2xl font-extrabold text-gray-900 tracking-tight"
+                                    >
+                                        O'zbegim Milliy Taomlari
+                                    </h1>
+                                    <span
+                                        class="inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full"
+                                    >
+                                        <svg
+                                            class="w-3 h-3 fill-green-500"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                                            />
+                                        </svg>
+                                        4.8
+                                    </span>
+                                </div>
+                                <div class="space-y-1.5 text-sm text-gray-500">
+                                    <p class="flex items-center gap-2">
+                                        <svg
+                                            class="w-4 h-4 text-brand-400 shrink-0"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                            />
+                                            <path
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                            /></svg
+                                        >Toshkent sh., Amir Temur ko'chasi,
+                                        45-uy
+                                    </p>
+                                    <p class="flex items-center gap-2">
+                                        <svg
+                                            class="w-4 h-4 text-brand-400 shrink-0"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <circle cx="12" cy="12" r="10" />
+                                            <path d="M12 6v6l4 2" /></svg
+                                        >Ish vaqti: 08:00 – 23:00
+                                    </p>
+                                    <p class="flex items-center gap-2">
+                                        <svg
+                                            class="w-4 h-4 text-brand-400 shrink-0"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                            /></svg
+                                        >+998 71 123 45 67
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Rating bars -->
+                            <div class="sm:min-w-[190px]">
+                                <p
+                                    class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2.5"
+                                >
+                                    Reyting (124 sharh)
+                                </p>
+                                <div class="space-y-1.5">
+                                    <div
+                                        class="flex items-center gap-2 text-xs"
+                                    >
+                                        <span
+                                            class="w-2.5 font-semibold text-gray-600"
+                                            >5</span
+                                        >
+                                        <div
+                                            class="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden"
+                                        >
+                                            <div
+                                                class="bg-green-400 h-full rounded-full"
+                                                style="width: 70%"
+                                            ></div>
+                                        </div>
+                                        <span
+                                            class="text-gray-400 w-7 text-right"
+                                            >70%</span
+                                        >
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 text-xs"
+                                    >
+                                        <span
+                                            class="w-2.5 font-semibold text-gray-600"
+                                            >4</span
+                                        >
+                                        <div
+                                            class="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden"
+                                        >
+                                            <div
+                                                class="bg-yellow-400 h-full rounded-full"
+                                                style="width: 20%"
+                                            ></div>
+                                        </div>
+                                        <span
+                                            class="text-gray-400 w-7 text-right"
+                                            >20%</span
+                                        >
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 text-xs"
+                                    >
+                                        <span
+                                            class="w-2.5 font-semibold text-gray-600"
+                                            >3</span
+                                        >
+                                        <div
+                                            class="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden"
+                                        >
+                                            <div
+                                                class="bg-orange-400 h-full rounded-full"
+                                                style="width: 5%"
+                                            ></div>
+                                        </div>
+                                        <span
+                                            class="text-gray-400 w-7 text-right"
+                                            >5%</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs card -->
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden fade-up"
+                        style="animation-delay: 0.1s"
+                    >
+                        <!-- Tab header -->
+                        <div
+                            class="flex items-center gap-0 px-5 border-b border-gray-100"
+                        >
+                            <button
+                                class="tab-btn active flex items-center gap-1.5 text-sm mr-6 pt-4"
+                                data-tab="menu"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                    />
+                                </svg>
+                                Menyu
+                            </button>
+                            <button
+                                class="tab-btn flex items-center gap-1.5 text-sm mr-6 pt-4 text-gray-500"
+                                data-tab="bron"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                                Bron qilish
+                            </button>
+                            <button
+                                class="tab-btn flex items-center gap-1.5 text-sm pt-4 text-gray-500"
+                                data-tab="sharhlar"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                                    />
+                                </svg>
+                                Sharhlar
+                            </button>
+                        </div>
+
+                        <!-- MENU panel -->
+                        <div id="tab-menu" class="tab-panel active p-5">
+                            <div
+                                class="flex items-center justify-between mb-4 flex-wrap gap-2"
+                            >
+                                <h2 class="text-base font-bold text-gray-900">
+                                    Mashhur Taomlar
+                                </h2>
+                                <div class="flex gap-2" id="cat-btns">
+                                    <button
+                                        class="cat-btn px-3 py-1.5 rounded-full bg-brand-500 text-white text-xs font-bold shadow-sm transition-all"
+                                    >
+                                        Hammasi
+                                    </button>
+                                    <button
+                                        class="cat-btn px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 text-xs font-medium hover:border-brand-400 hover:text-brand-500 transition-all"
+                                    >
+                                        Osh
+                                    </button>
+                                    <button
+                                        class="cat-btn px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 text-xs font-medium hover:border-brand-400 hover:text-brand-500 transition-all"
+                                    >
+                                        Somsa
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <!-- food items -->
+                                <div
+                                    class="food-card flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100"
+                                >
+                                    <img
+                                        src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=120&q=80"
+                                        alt="Osh"
+                                        class="w-16 h-16 rounded-xl object-cover shrink-0"
+                                    />
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="font-bold text-sm text-gray-800 mb-0.5"
+                                        >
+                                            Choyxona Oshi
+                                        </p>
+                                        <p
+                                            class="text-xs text-gray-400 mb-2 truncate"
+                                        >
+                                            O'z plov, qovurib, qiyma, sabzyavot
+                                        </p>
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span
+                                                class="text-sm font-extrabold text-brand-500"
+                                                >45 000 so'm</span
+                                            >
+                                            <button
+                                                class="flex items-center gap-1 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all active:scale-95 shadow-sm"
+                                            >
+                                                <svg
+                                                    class="w-3 h-3"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    stroke-width="3"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 4v16m8-8H4"
+                                                    /></svg
+                                                >Zakaz
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="food-card flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100"
+                                >
+                                    <img
+                                        src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=120&q=80"
+                                        alt="Somsa"
+                                        class="w-16 h-16 rounded-xl object-cover shrink-0"
+                                    />
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="font-bold text-sm text-gray-800 mb-0.5"
+                                        >
+                                            G'ijduvon Somsasi
+                                        </p>
+                                        <p
+                                            class="text-xs text-gray-400 mb-2 truncate"
+                                        >
+                                            Tandirda pishgan go'shtli somsa ji
+                                            do'na
+                                        </p>
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span
+                                                class="text-sm font-extrabold text-brand-500"
+                                                >12 000 so'm</span
+                                            >
+                                            <button
+                                                class="flex items-center gap-1 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all active:scale-95 shadow-sm"
+                                            >
+                                                <svg
+                                                    class="w-3 h-3"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    stroke-width="3"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 4v16m8-8H4"
+                                                    /></svg
+                                                >Zakaz
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="food-card flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100"
+                                >
+                                    <img
+                                        src="https://images.unsplash.com/photo-1574484284002-952d92456975?w=120&q=80"
+                                        alt="Sho'rva"
+                                        class="w-16 h-16 rounded-xl object-cover shrink-0"
+                                    />
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="font-bold text-sm text-gray-800 mb-0.5"
+                                        >
+                                            Qaynatma Sho'rva
+                                        </p>
+                                        <p
+                                            class="text-xs text-gray-400 mb-2 truncate"
+                                        >
+                                            Yangi mol go'shti va sabzavotlar
+                                        </p>
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span
+                                                class="text-sm font-extrabold text-brand-500"
+                                                >38 000 so'm</span
+                                            >
+                                            <button
+                                                class="flex items-center gap-1 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all active:scale-95 shadow-sm"
+                                            >
+                                                <svg
+                                                    class="w-3 h-3"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    stroke-width="3"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 4v16m8-8H4"
+                                                    /></svg
+                                                >Zakaz
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="food-card flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100"
+                                >
+                                    <img
+                                        src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=120&q=80"
+                                        alt="Kabob"
+                                        class="w-16 h-16 rounded-xl object-cover shrink-0"
+                                    />
+                                    <div class="flex-1 min-w-0">
+                                        <p
+                                            class="font-bold text-sm text-gray-800 mb-0.5"
+                                        >
+                                            Qiyma Kabob
+                                        </p>
+                                        <p
+                                            class="text-xs text-gray-400 mb-2 truncate"
+                                        >
+                                            O'tma kabob, piyoz va ziravorlar
+                                        </p>
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span
+                                                class="text-sm font-extrabold text-brand-500"
+                                                >28 000 so'm</span
+                                            >
+                                            <button
+                                                class="flex items-center gap-1 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all active:scale-95 shadow-sm"
+                                            >
+                                                <svg
+                                                    class="w-3 h-3"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    stroke-width="3"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 4v16m8-8H4"
+                                                    /></svg
+                                                >Zakaz
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BRON panel -->
+                        <div id="tab-bron" class="tab-panel p-5">
+                            <p class="text-sm text-gray-500 mb-4">
+                                Jadval orqali joy band qiling. Mavjud vaqtlarni
+                                tanlang.
+                            </p>
+                            <div
+                                class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4"
+                            >
+                                <div>
+                                    <label
+                                        class="block text-xs font-semibold text-gray-500 mb-1.5"
+                                        >Sana</label
+                                    >
+                                    <input
+                                        type="date"
+                                        value="2026-03-25"
+                                        class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-brand-400 transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-semibold text-gray-500 mb-1.5"
+                                        >Vaqt</label
+                                    >
+                                    <select
+                                        class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-brand-400 bg-white"
+                                    >
+                                        <option>19:30</option>
+                                        <option>18:00</option>
+                                        <option>20:00</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-semibold text-gray-500 mb-1.5"
+                                        >Kishi</label
+                                    >
+                                    <select
+                                        class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-brand-400 bg-white"
+                                    >
+                                        <option>2 kishi</option>
+                                        <option>1 kishi</option>
+                                        <option>4 kishi</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button
+                                class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-md transition-all active:scale-[.98]"
+                            >
+                                Joyni tekshirish
+                            </button>
+                        </div>
+
+                        <!-- SHARHLAR panel -->
+                        <div id="tab-sharhlar" class="tab-panel p-5 space-y-4">
+                            <div class="flex gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center shrink-0 text-brand-600 font-bold text-sm"
+                                >
+                                    M
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-semibold text-sm"
+                                            >Malika S.</span
+                                        >
+                                        <span class="text-yellow-400 text-xs"
+                                            >★★★★★</span
+                                        >
+                                    </div>
+                                    <p class="text-sm text-gray-500">
+                                        Juda mazali osh! Muhit ham ajoyib,
+                                        xizmat tez va do'stona. Albatta qaytib
+                                        kelaman.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0 text-blue-600 font-bold text-sm"
+                                >
+                                    J
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-semibold text-sm"
+                                            >Jamshid T.</span
+                                        >
+                                        <span class="text-yellow-400 text-xs"
+                                            >★★★★☆</span
+                                        >
+                                    </div>
+                                    <p class="text-sm text-gray-500">
+                                        Taomlar juda sifatli. Somsa ayniqsa zo'r
+                                        edi. Narxi ham maqbul.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-600 font-bold text-sm"
+                                >
+                                    N
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-semibold text-sm"
+                                            >Nilufar A.</span
+                                        >
+                                        <span class="text-yellow-400 text-xs"
+                                            >★★★★★</span
+                                        >
+                                    </div>
+                                    <p class="text-sm text-gray-500">
+                                        Oilaviy kechki ovqat uchun ideal joy.
+                                        Shovqinsiz, qulay va juda ham iliq
+                                        muhit.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MAP -->
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden fade-up"
+                        style="animation-delay: 0.15s"
+                    >
+                        <div
+                            class="relative"
+                            style="
+                                height: 190px;
+                                background: linear-gradient(
+                                    135deg,
+                                    #e8f5e9 0%,
+                                    #c8e6c9 100%
+                                );
+                            "
+                        >
+                            <svg
+                                class="absolute inset-0 w-full h-full opacity-25"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <defs>
+                                    <pattern
+                                        id="g"
+                                        width="28"
+                                        height="28"
+                                        patternUnits="userSpaceOnUse"
+                                    >
+                                        <path
+                                            d="M 28 0 L 0 0 0 28"
+                                            fill="none"
+                                            stroke="#4ade80"
+                                            stroke-width="0.5"
+                                        />
+                                    </pattern>
+                                </defs>
+                                <rect
+                                    width="100%"
+                                    height="100%"
+                                    fill="url(#g)"
+                                />
+                            </svg>
+                            <svg
+                                class="absolute inset-0 w-full h-full opacity-60"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <line
+                                    x1="0"
+                                    y1="95"
+                                    x2="100%"
+                                    y2="95"
+                                    stroke="#86efac"
+                                    stroke-width="10"
+                                />
+                                <line
+                                    x1="0"
+                                    y1="135"
+                                    x2="100%"
+                                    y2="135"
+                                    stroke="#bbf7d0"
+                                    stroke-width="5"
+                                />
+                                <line
+                                    x1="140"
+                                    y1="0"
+                                    x2="140"
+                                    y2="100%"
+                                    stroke="#86efac"
+                                    stroke-width="7"
+                                />
+                                <line
+                                    x1="310"
+                                    y1="0"
+                                    x2="310"
+                                    y2="100%"
+                                    stroke="#bbf7d0"
+                                    stroke-width="4"
+                                />
+                                <line
+                                    x1="430"
+                                    y1="0"
+                                    x2="360"
+                                    y2="100%"
+                                    stroke="#bbf7d0"
+                                    stroke-width="3"
+                                />
+                            </svg>
+                            <div
+                                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full flex flex-col items-center"
+                            >
+                                <div
+                                    class="bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg mb-1 whitespace-nowrap"
+                                >
+                                    Amir Temur ko'chasi, 45-uy
+                                </div>
+                                <svg
+                                    class="w-7 h-7 text-brand-500 drop-shadow-lg"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END LEFT -->
+
+                <!-- RIGHT: BOOKING -->
+                <div class="w-full lg:w-[300px] shrink-0">
+                    <div
+                        class="booking-sticky bg-white rounded-2xl shadow-sm border border-gray-100 p-5 fade-up"
+                        style="animation-delay: 0.08s"
+                    >
+                        <div class="flex items-center gap-2 mb-5">
+                            <svg
+                                class="w-5 h-5 text-brand-500"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                            </svg>
+                            <h3 class="text-base font-bold text-gray-900">
+                                Bron qilish
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- Sana -->
+                            <div>
+                                <label
+                                    class="flex items-center gap-1.5 text-xs font-semibold text-gray-500 mb-1.5"
+                                >
+                                    <svg
+                                        class="w-3.5 h-3.5 text-brand-400"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <rect
+                                            x="3"
+                                            y="4"
+                                            width="18"
+                                            height="18"
+                                            rx="2"
+                                        />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                    Sana
+                                </label>
+                                <select
+                                    class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-brand-400 bg-white transition-colors"
+                                >
+                                    <option>25.03.2026</option>
+                                    <option>26.03.2026</option>
+                                    <option>27.03.2026</option>
+                                </select>
+                            </div>
+
+                            <!-- Vaqt + Kishi -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label
+                                        class="flex items-center gap-1 text-xs font-semibold text-gray-500 mb-1.5"
+                                    >
+                                        <svg
+                                            class="w-3.5 h-3.5 text-brand-400"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <circle cx="12" cy="12" r="10" />
+                                            <path d="M12 6v6l4 2" /></svg
+                                        >Vaqt
+                                    </label>
+                                    <select
+                                        class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-brand-400 bg-white"
+                                    >
+                                        <option>19:30</option>
+                                        <option>18:00</option>
+                                        <option>20:00</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label
+                                        class="flex items-center gap-1 text-xs font-semibold text-gray-500 mb-1.5"
+                                    >
+                                        <svg
+                                            class="w-3.5 h-3.5 text-brand-400"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"
+                                            />
+                                            <circle cx="9" cy="7" r="4" /></svg
+                                        >Kishi
+                                    </label>
+                                    <select
+                                        class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-brand-400 bg-white"
+                                    >
+                                        <option>2 kishi</option>
+                                        <option>1 kishi</option>
+                                        <option>4 kishi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Stol -->
+                            <div>
+                                <label
+                                    class="flex items-center gap-1.5 text-xs font-semibold text-gray-500 mb-1.5"
+                                >
+                                    <svg
+                                        class="w-3.5 h-3.5 text-brand-400"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path d="M3 12h18M3 6h18M3 18h18" />
+                                    </svg>
+                                    Stol turini tanlang
+                                </label>
+                                <select
+                                    class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-brand-400 bg-white"
+                                >
+                                    <option>Deraza yoni</option>
+                                    <option>Burchak stol</option>
+                                    <option>Tashqarida</option>
+                                    <option>VIP xona</option>
+                                </select>
+                            </div>
+
+                            <!-- Qo'shimcha -->
+                            <div>
+                                <label
+                                    class="flex items-center gap-1.5 text-xs font-semibold text-gray-500 mb-1.5"
+                                >
+                                    <svg
+                                        class="w-3.5 h-3.5 text-brand-400"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path
+                                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                                        />
+                                    </svg>
+                                    Qo'shimcha
+                                </label>
+                                <textarea
+                                    rows="2"
+                                    placeholder="Maxsus talablar..."
+                                    class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-brand-400 resize-none placeholder-gray-300 transition-colors"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Summary -->
+                        <div
+                            class="bg-gray-50 rounded-xl p-3 mt-4 mb-4 border border-gray-100"
+                        >
+                            <div
+                                class="flex justify-between text-xs text-gray-500 mb-2"
+                            >
+                                <span>Xizmat haqi (8%)</span>
+                                <span>12 500 so'm</span>
+                            </div>
+                            <div
+                                class="flex justify-between items-center pt-2 border-t border-gray-200"
+                            >
+                                <span class="text-sm font-bold text-gray-700"
+                                    >Umumiy:</span
+                                >
+                                <span
+                                    class="text-lg font-extrabold text-brand-500"
+                                    >250 000 so'm</span
+                                >
+                            </div>
+                        </div>
+
+                        <button
+                            class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-200/50 transition-all active:scale-[.98] flex items-center justify-center gap-2 text-sm"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M5 13l4 4L19 7"
+                                />
+                            </svg>
+                            Bronni tasdiqlash va to'lash
+                        </button>
+                        <p class="text-center text-[11px] text-gray-400 mt-2.5">
+                            Zaypsiz to'lov tizimi
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-white border-t border-gray-100 mt-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="flex flex-col md:flex-row justify-between gap-8">
+                    <div class="max-w-xs">
+                        <a href="#" class="flex items-center gap-2 mb-3">
+                            <div
+                                class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center shadow-md"
+                            >
+                                <svg
+                                    class="w-4 h-4 text-white"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 6v6l4 2"
+                                    />
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="9"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                    />
+                                </svg>
+                            </div>
+                            <span class="text-xl font-extrabold"
+                                ><span class="text-brand-500">Resto</span
+                                ><span class="text-gray-800">Best</span></span
+                            >
+                        </a>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            Sevimli taomlaringizni topish va joy bron qilishning
+                            eng oson yo'li.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-8 text-sm">
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-3">
+                                Kompaniya
+                            </h4>
+                            <ul class="space-y-2 text-gray-500">
+                                <li>
+                                    <a href="#" class="hover:text-brand-500"
+                                        >Biz haqimizda</a
+                                    >
+                                </li>
+                                <li>
+                                    <a href="#" class="hover:text-brand-500"
+                                        >Karyera</a
+                                    >
+                                </li>
+                                <li>
+                                    <a href="#" class="hover:text-brand-500"
+                                        >Blog</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-3">Yordam</h4>
+                            <ul class="space-y-2 text-gray-500">
+                                <li>
+                                    <a href="#" class="hover:text-brand-500"
+                                        >FAQ</a
+                                    >
+                                </li>
+                                <li>
+                                    <a href="#" class="hover:text-brand-500"
+                                        >Bog'lanish</a
+                                    >
+                                </li>
+                                <li>
+                                    <a href="#" class="hover:text-brand-500"
+                                        >Qoidalar</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-3">
+                                Ijtimoiy
+                            </h4>
+                            <div class="flex flex-col gap-2">
+                                <a
+                                    href="#"
+                                    class="text-gray-400 hover:text-brand-500"
+                                    ><svg
+                                        class="w-5 h-5"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
+                                        /></svg
+                                ></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-6 border-t border-gray-100 text-xs text-gray-400"
+                >
+                    <span>© 2024 RestoBest. Barcha huquqlar himoyalangan.</span>
+                    <div class="flex gap-4">
+                        <a href="#" class="hover:text-brand-500"
+                            >Maxfiylik siyosati</a
+                        ><a href="#" class="hover:text-brand-500"
+                            >Foydalanish shartlari</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Drawer
+            const hamburger = document.getElementById("hamburger"),
+                drawer = document.getElementById("mobile-drawer"),
+                overlay = document.getElementById("drawer-overlay"),
+                closeBtn = document.getElementById("drawer-close");
+            function openDrawer() {
+                drawer.classList.add("open");
+                overlay.classList.add("open");
+                document.body.style.overflow = "hidden";
+            }
+            function closeDrawer() {
+                drawer.classList.remove("open");
+                overlay.classList.remove("open");
+                document.body.style.overflow = "";
+            }
+            hamburger.addEventListener("click", openDrawer);
+            closeBtn.addEventListener("click", closeDrawer);
+            overlay.addEventListener("click", closeDrawer);
+
+            // Tabs
+            document.querySelectorAll(".tab-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    document
+                        .querySelectorAll(".tab-btn")
+                        .forEach((b) => b.classList.remove("active"));
+                    document
+                        .querySelectorAll(".tab-panel")
+                        .forEach((p) => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    document
+                        .getElementById("tab-" + btn.dataset.tab)
+                        .classList.add("active");
+                });
+            });
+
+            // Category buttons
+            document.querySelectorAll("#cat-btns .cat-btn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    document
+                        .querySelectorAll("#cat-btns .cat-btn")
+                        .forEach((b) => {
+                            b.className =
+                                "cat-btn px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 text-xs font-medium hover:border-brand-400 hover:text-brand-500 transition-all";
+                        });
+                    this.className =
+                        "cat-btn px-3 py-1.5 rounded-full bg-brand-500 text-white text-xs font-bold shadow-sm transition-all";
+                });
+            });
+
+            // Favourite
+            const favBtn = document.getElementById("fav-btn"),
+                favIcon = document.getElementById("fav-icon");
+            let faved = false;
+            favBtn.addEventListener("click", () => {
+                faved = !faved;
+                favIcon.setAttribute("fill", faved ? "#f87171" : "none");
+                favIcon.setAttribute(
+                    "stroke",
+                    faved ? "#f87171" : "currentColor",
+                );
+                favBtn.classList.toggle("border-red-300", faved);
+                favBtn.classList.toggle("text-red-400", faved);
+            });
+        </script>
+    </body>
+</html>
