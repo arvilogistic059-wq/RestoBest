@@ -347,7 +347,7 @@
                             Aloqa
                         </a>
                         <a
-                            href="#"
+                            href="Buyurtma.html"
                             class="nav-link flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-brand-500 transition-colors"
                         >
                             <svg
@@ -361,7 +361,7 @@
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                             </svg>
-                            Bronlarim
+                            Buyurtma berish
                         </a>
                     </nav>
 
@@ -381,18 +381,11 @@
 
                     <!-- Mobile auth -->
                     <div class="flex md:hidden items-center gap-2">
-                        <!-- <button
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold border-2 border-gray-200"
+                        <a
+                            href="profil.html"
+                            class="px-5 py-2 rounded-lg text-sm font-semibold bg-brand-500 text-white hover:bg-brand-600 shadow-md transition-all active:scale-95"
+                            >Profile</a
                         >
-                            Kirish
-                        </button>
-                        <button
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white shadow-sm"
-                        >
-                            Ro'yxat
-                        </button> -->
-
-                        <a href="profil.html" class="px-5 py-2 rounded-lg text-sm font-semibold bg-brand-500 text-white hover:bg-brand-600 shadow-md transition-all active:scale-95">Profile</a>
                     </div>
                 </div>
             </div>
@@ -436,6 +429,7 @@
                         ><span class="text-gray-800">Best</span></span
                     >
                 </a>
+
                 <button
                     id="drawer-close"
                     class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition"
@@ -455,9 +449,10 @@
                     </svg>
                 </button>
             </div>
+
             <nav class="flex flex-col gap-1 p-4 flex-1">
                 <a
-                    href="Asosiy.html"
+                    href="index.html"
                     class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-brand-500 bg-brand-50"
                 >
                     <svg
@@ -506,7 +501,7 @@
                     Aloqa
                 </a>
                 <a
-                    href="#"
+                    href="Buyurtma.html"
                     class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-500 transition-colors"
                 >
                     <svg
@@ -520,7 +515,7 @@
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                         />
                     </svg>
-                    Bronlarim
+                    Buyurtma berish
                 </a>
             </nav>
             <div
@@ -598,11 +593,16 @@
                             <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
 
-                        <input
-                            type="text"
-                            value="Urganch"
-                            class="text-sm font-medium text-gray-800 bg-transparent focus:outline-none w-full placeholder-gray-400"
-                        />
+                        <select
+                            name="city"
+                            id="qidiruv"
+                            class="text-sm font-medium text-gray-800 bg-transparent appearance-none focus:outline-none"
+                        >
+                            <option value="urgench">Urganch</option>
+                            <option value="Samarqand">Samarqand</option>
+                            <option value="Buxoro">Buxoro</option>
+                            <option value="toshkent">Toshkent</option>
+                        </select>
                     </div>
 
                     <!-- Search input -->
@@ -620,6 +620,7 @@
                             <path d="M21 21l-4.35-4.35" />
                         </svg>
                         <input
+                            id="search-input"
                             type="text"
                             placeholder="Restoran nomi yoki taom turi..."
                             class="text-sm text-gray-600 bg-transparent focus:outline-none w-full placeholder-gray-400"
@@ -628,6 +629,7 @@
 
                     <!-- CTA -->
                     <button
+                        id="search-btn"
                         class="px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm shadow-lg transition-all active:scale-95 whitespace-nowrap"
                     >
                         Qidirish →
@@ -654,7 +656,7 @@
                 <!-- Scrollable pills -->
                 <div class="flex gap-3 overflow-x-auto scroll-hide pb-1">
                     <button
-                        class="cat-pill active flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-brand-500 bg-brand-500 text-white text-sm font-semibold shadow-sm"
+                        class="cat-pill flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gray-200 bg-white text-gray-700 text-sm font-semibold shadow-sm"
                     >
                         🍽️ Milliy
                     </button>
@@ -742,329 +744,17 @@
                     </div>
                 </div>
 
+                <!-- Barcha restoranlar qolipi id="all" -->
                 <div
                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                    <!-- Card 1: Afsona Oshxona -->
-                    <article
-                        class="resto-card card-1 bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100"
-                    >
-                        <div class="card-img-wrap relative h-48">
-                            <img
-                                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80"
-                                alt="Afsona Oshxona"
-                                class="w-full h-full object-cover"
-                            />
-                            <div
-                                class="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur rounded-full px-2.5 py-1 shadow text-xs font-bold"
-                            >
-                                <svg
-                                    class="w-3 h-3 text-yellow-400 fill-yellow-400"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                                    />
-                                </svg>
-                                4.8
-                                <span class="text-gray-400 font-normal"
-                                    >(1304)</span
-                                >
-                            </div>
-                            <div class="absolute top-3 right-3">
-                                <span
-                                    class="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                    >$$</span
-                                >
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-gray-900 text-base mb-1">
-                                Afsona Oshxona
-                            </h3>
-                            <div
-                                class="flex items-center gap-3 text-xs text-gray-400 mb-1"
-                            >
-                                <span class="flex items-center gap-1">
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
-                                        <path
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                        />
-                                    </svg>
-                                    Toshkent
-                                </span>
-                                <span>•</span>
-                                <span class="flex items-center gap-1">
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M17 20h5v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2h5"
-                                        />
-                                        <circle cx="12" cy="7" r="4" />
-                                    </svg>
-                                    Milliy Taomlar
-                                </span>
-                            </div>
-                            <p class="text-xs text-gray-400 mb-4 truncate">
-                                Amir Temur ko'chasi, 16-uy
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <a
-                                    href="restobest-detail.html"
-                                    class="text-xs text-brand-500 font-semibold hover:underline flex items-center gap-1"
-                                >
-                                    Batafsil ko'rish
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2.5"
-                                    >
-                                        <path d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
-                                <button
-                                    class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all active:scale-95 shadow-sm"
-                                >
-                                    Band qilish
-                                </button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Card 2: Steam Bar -->
-                    <article
-                        class="resto-card card-2 bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100"
-                    >
-                        <div class="card-img-wrap relative h-48">
-                            <img
-                                src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"
-                                alt="Steam Bar"
-                                class="w-full h-full object-cover"
-                            />
-                            <div
-                                class="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur rounded-full px-2.5 py-1 shadow text-xs font-bold"
-                            >
-                                <svg
-                                    class="w-3 h-3 text-yellow-400 fill-yellow-400"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                                    />
-                                </svg>
-                                4.7
-                                <span class="text-gray-400 font-normal"
-                                    >(372)</span
-                                >
-                            </div>
-                            <div class="absolute top-3 right-3">
-                                <span
-                                    class="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                    >$$$</span
-                                >
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-gray-900 text-base mb-1">
-                                Steam Bar
-                            </h3>
-                            <div
-                                class="flex items-center gap-3 text-xs text-gray-400 mb-1"
-                            >
-                                <span class="flex items-center gap-1">
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
-                                        <path
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                        />
-                                    </svg>
-                                    Samarqand
-                                </span>
-                                <span>•</span>
-                                <span class="flex items-center gap-1">
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M17 20h5v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2h5"
-                                        />
-                                        <circle cx="12" cy="7" r="4" />
-                                    </svg>
-                                    G'arb Taomlari
-                                </span>
-                            </div>
-                            <p class="text-xs text-gray-400 mb-4 truncate">
-                                Registon maydoni yaqinida
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <a
-                                    href="restobest-detail.html"
-                                    class="text-xs text-brand-500 font-semibold hover:underline flex items-center gap-1"
-                                >
-                                    Batafsil ko'rish
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2.5"
-                                    >
-                                        <path d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
-                                <button
-                                    class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all active:scale-95 shadow-sm"
-                                >
-                                    Band qilish
-                                </button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Card 3: Buxoro Choyxonasi -->
-                    <article
-                        class="resto-card card-3 bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100"
-                    >
-                        <div class="card-img-wrap relative h-48">
-                            <img
-                                src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=600&q=80"
-                                alt="Buxoro Choyxonasi"
-                                class="w-full h-full object-cover"
-                            />
-                            <div
-                                class="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur rounded-full px-2.5 py-1 shadow text-xs font-bold"
-                            >
-                                <svg
-                                    class="w-3 h-3 text-yellow-400 fill-yellow-400"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                                    />
-                                </svg>
-                                4.9
-                                <span class="text-gray-400 font-normal"
-                                    >(541)</span
-                                >
-                            </div>
-                            <div class="absolute top-3 right-3">
-                                <span
-                                    class="bg-brand-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                    >$</span
-                                >
-                            </div>
-                            <div class="absolute bottom-3 left-3">
-                                <span
-                                    class="bg-black/60 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
-                                >
-                                    <svg
-                                        class="w-2.5 h-2.5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
-                                        <path
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                        />
-                                    </svg>
-                                    Buxoro
-                                </span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-gray-900 text-base mb-1">
-                                Buxoro Choyxonasi
-                            </h3>
-                            <div
-                                class="flex items-center gap-3 text-xs text-gray-400 mb-1"
-                            >
-                                <span class="flex items-center gap-1">
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
-                                        <path
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                        />
-                                    </svg>
-                                    Buxoro
-                                </span>
-                                <span>•</span>
-                                <span>Sharq</span>
-                                <span>•</span>
-                                <span>Milliy</span>
-                            </div>
-                            <p class="text-xs text-gray-400 mb-4 truncate">
-                                Eski shahar, Labi hovuz majmuasi
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <a
-                                    href="restobest-detail.html"
-                                    class="text-xs text-brand-500 font-semibold hover:underline flex items-center gap-1"
-                                >
-                                    Batafsil ko'rish
-                                    <svg
-                                        class="w-3 h-3"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2.5"
-                                    >
-                                        <path d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
-                                <button
-                                    class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all active:scale-95 shadow-sm"
-                                >
-                                    Band qilish
-                                </button>
-                            </div>
-                        </div>
-                    </article>
+                    id="all">
+                    
                 </div>
 
                 <!-- View all -->
                 <div class="text-center mt-8">
                     <a
-                        href="restobest.html"
+                        href=""
                         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-brand-500 text-brand-500 font-bold text-sm hover:bg-brand-50 transition-all"
                     >
                         Barcha restoranlarni ko'rish
@@ -1116,11 +806,13 @@
                                 class="flex flex-col sm:flex-row gap-3 max-w-md"
                             >
                                 <input
+                                    id="newsletter-input"
                                     type="email"
                                     placeholder="Email manzilingiz"
                                     class="nl-input flex-1 px-4 py-3 rounded-xl border-2 border-white/20 bg-white/15 text-white placeholder-white/50 text-sm font-medium focus:outline-none transition"
                                 />
                                 <button
+                                    id="newsletter-btn"
                                     class="px-6 py-3 rounded-xl bg-white text-teal-600 font-bold text-sm hover:bg-gray-50 transition-all active:scale-95 whitespace-nowrap shadow-lg"
                                 >
                                     Obuna bo'lish
@@ -1404,18 +1096,20 @@
             const overlay = document.getElementById("drawer-overlay");
             const closeBtn = document.getElementById("drawer-close");
             function openDrawer() {
+                if (!drawer || !overlay) return;
                 drawer.classList.add("open");
                 overlay.classList.add("open");
                 document.body.style.overflow = "hidden";
             }
             function closeDrawer() {
+                if (!drawer || !overlay) return;
                 drawer.classList.remove("open");
                 overlay.classList.remove("open");
                 document.body.style.overflow = "";
             }
-            hamburger.addEventListener("click", openDrawer);
-            closeBtn.addEventListener("click", closeDrawer);
-            overlay.addEventListener("click", closeDrawer);
+            if (hamburger) hamburger.addEventListener("click", openDrawer);
+            if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
+            if (overlay) overlay.addEventListener("click", closeDrawer);
 
             // Category pills
             document.querySelectorAll(".cat-pill").forEach((btn) => {
@@ -1428,19 +1122,20 @@
             });
 
             // Newsletter
-            document
-                .querySelector("button.whitespace-nowrap")
-                .addEventListener("click", function () {
-                    const input = this.previousElementSibling;
-                    if (input.value.trim()) {
-                        input.value = "";
-                        input.placeholder = "✅ Obuna bo'ldingiz!";
-                        setTimeout(
-                            () => (input.placeholder = "Email manzilingiz"),
-                            3000,
-                        );
+            const newsletterBtn = document.getElementById("newsletter-btn");
+            const newsletterInput = document.getElementById("newsletter-input");
+            if (newsletterBtn && newsletterInput) {
+                newsletterBtn.addEventListener("click", function () {
+                    if (newsletterInput.value.trim()) {
+                        newsletterInput.value = "";
+                        newsletterInput.placeholder = "Obuna bo'ldingiz!";
+                        setTimeout(() => {
+                            newsletterInput.placeholder = "Email manzilingiz";
+                        }, 3000);
                     }
                 });
+            }
         </script>
+        <script src="app.js"></script>
     </body>
 </html>

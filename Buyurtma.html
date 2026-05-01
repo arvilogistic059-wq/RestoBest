@@ -1,0 +1,2295 @@
+<!doctype html>
+<html lang="uz">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>RestoBest — Ovqatlar</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap"
+            rel="stylesheet"
+        />
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["DM Sans", "sans-serif"],
+                            serif: ["DM Serif Display", "serif"],
+                        },
+                        colors: {
+                            brand: "#f05a28",
+                            dark: "#1a1a1a",
+                            surface: "#f7f7f5",
+                        },
+                        boxShadow: {
+                            card: "0 2px 16px 0 rgba(0,0,0,0.08)",
+                            "card-hover": "0 8px 32px 0 rgba(0,0,0,0.14)",
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "DM Sans", sans-serif;
+                background: #f7f7f5;
+            }
+
+            /* Drawer */
+            .drawer {
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .drawer.open {
+                transform: translateX(0);
+            }
+            .overlay {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.28s;
+            }
+            .overlay.open {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            /* Category scroll */
+            .cats {
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+            .cats::-webkit-scrollbar {
+                display: none;
+            }
+
+            /* Card image zoom */
+            .food-img {
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .food-card:hover .food-img {
+                transform: scale(1.06);
+            }
+
+            /* Badge */
+            .rating-badge {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(6px);
+            }
+
+            /* Promo section */
+            .promo-bg {
+                background: linear-gradient(
+                    135deg,
+                    #d4f0e8 0%,
+                    #b8e8d4 40%,
+                    #a0ddc4 100%
+                );
+            }
+
+            /* Button press */
+            .btn-order:active {
+                transform: scale(0.96);
+            }
+
+            /* Scrollbar for main */
+            ::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #d1d5db;
+                border-radius: 99px;
+            }
+        </style>
+    </head>
+    <body class="min-h-screen">
+        <!-- ══════════════════════════════════
+     OVERLAY
+══════════════════════════════════ -->
+        <div
+            id="overlay"
+            class="overlay fixed inset-0 bg-black/50 z-40 md:hidden"
+            onclick="closeDrawer()"
+        ></div>
+
+        <!-- ══════════════════════════════════
+     DRAWER — slides LEFT → RIGHT
+══════════════════════════════════ -->
+        <aside
+            id="drawer"
+            class="drawer fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl md:hidden"
+        >
+            <!-- Header -->
+            <div
+                class="flex items-center justify-between px-5 py-4 border-b border-gray-100"
+            >
+                <div class="flex items-center gap-2">
+                    <svg
+                        class="w-5 h-5 text-brand"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                    >
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                        <line x1="6" y1="1" x2="6" y2="4" />
+                        <line x1="10" y1="1" x2="10" y2="4" />
+                        <line x1="14" y1="1" x2="14" y2="4" />
+                    </svg>
+                    <span class="text-base font-bold text-dark">RestoBest</span>
+                </div>
+                <button
+                    onclick="closeDrawer()"
+                    class="p-2 rounded-xl hover:bg-gray-100 transition text-gray-400"
+                >
+                    <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Nav links -->
+            <nav class="flex-1 px-3 pt-4 space-y-1 overflow-y-auto">
+                <a
+                    href="index.html"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-brand bg-orange-50"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                        />
+                        <polyline points="9,22 9,12 15,12 15,22" />
+                    </svg>
+                    Bosh
+                </a>
+                <a
+                    href="restoranlar.html"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                        <line x1="6" y1="1" x2="6" y2="4" />
+                        <line x1="10" y1="1" x2="10" y2="4" />
+                        <line x1="14" y1="1" x2="14" y2="4" />
+                    </svg>
+                    Restoranlar
+                </a>
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12 19.79 19.79 0 0 1 1.07 3.4 2 2 0 0 1 3.06 1.25h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 5.94 5.94l1.25-1.25a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"
+                        />
+                    </svg>
+                    Aloqa
+                </a>
+                <a
+                    href="Buyurtma.html"
+                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Buyurtma berish
+                </a>
+
+                <div class="pt-3 pb-1 px-3">
+                    <p
+                        class="text-[11px] uppercase tracking-widest font-bold text-gray-300"
+                    >
+                        Kategoriyalar
+                    </p>
+                </div>
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >🍕 Pizza</a
+                >
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >🍔 Burger</a
+                >
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >🍖 Milliy taomlar</a
+                >
+                <a
+                    href="#"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >🍱 Shrinliklar</a
+                >
+            </nav>
+
+            <!-- Auth buttons -->
+            <div
+                class="px-4 pb-6 pt-3 border-t border-gray-100 flex flex-col gap-2"
+            >
+                <button
+                    class="w-full border-2 border-gray-200 text-dark font-bold py-2.5 rounded-xl text-sm hover:bg-gray-50 transition"
+                >
+                    Kirish
+                </button>
+                <button
+                    class="w-full bg-brand text-white font-bold py-2.5 rounded-xl text-sm hover:opacity-90 transition"
+                >
+                    Ro'yxat
+                </button>
+            </div>
+        </aside>
+
+        <!-- ══════════════════════════════════
+     HEADER
+══════════════════════════════════ -->
+        <header
+            class="sticky top-0 z-30 bg-white border-b border-gray-100"
+            style="box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06)"
+        >
+            <div
+                class="max-w-6xl mx-auto flex items-center justify-between px-4 md:px-6 h-14"
+            >
+                <div class="flex items-center gap-2">
+                    <!-- Burger btn — LEFT of logo, mobile only -->
+                    <button
+                        onclick="openDrawer()"
+                        class="md:hidden p-2 rounded-xl hover:bg-gray-100 transition mr-0.5"
+                        aria-label="Menyu"
+                    >
+                        <svg
+                            class="w-5 h-5 text-dark"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            viewBox="0 0 24 24"
+                        >
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+
+                    <!-- Logo -->
+                    <a href="#" class="flex items-center gap-1.5">
+                        <svg
+                            class="w-5 h-5 text-brand"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                        >
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                            <path
+                                d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                            />
+                            <line x1="6" y1="1" x2="6" y2="4" />
+                            <line x1="10" y1="1" x2="10" y2="4" />
+                            <line x1="14" y1="1" x2="14" y2="4" />
+                        </svg>
+                        <span class="text-base font-bold text-dark"
+                            >RestoBest</span
+                        >
+                    </a>
+                </div>
+
+                <!-- Desktop nav -->
+                <nav class="hidden md:flex items-center gap-0.5">
+                    <a
+                        href="index.html"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-brand bg-orange-50"
+                    >
+                        <svg
+                            class="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                            />
+                        </svg>
+                        
+                        Bosh
+                    </a>
+                    <a
+                        href="restoranlar.html"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >
+                        <svg
+                            class="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                            <path
+                                d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                            />
+                            <line x1="6" y1="1" x2="6" y2="4" />
+                            <line x1="10" y1="1" x2="10" y2="4" />
+                            <line x1="14" y1="1" x2="14" y2="4" />
+                        </svg>
+                        
+                        Restoranlar
+                    </a>
+                    <a
+                        href="#"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >
+                        <svg
+                            class="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12 19.79 19.79 0 0 1 1.07 3.4 2 2 0 0 1 3.06 1.25h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 5.94 5.94l1.25-1.25a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"
+                            />
+                        </svg>
+                        
+                        Aloqa
+                    </a>
+                    <a
+                        href="Buyurtma.html"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                    >
+                        <svg
+                            class="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                            />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Buyurtma berish
+                    </a>
+                </nav>
+
+                <!-- Desktop CTA -->
+                <div class="hidden md:flex items-center gap-2">
+                    <button
+                        class="px-5 py-2 bg-dark text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition"
+                    >
+                        Kirish
+                    </button>
+                    <button
+                        class="px-5 py-2 bg-brand text-white rounded-xl text-sm font-bold hover:opacity-90 transition"
+                    >
+                        Ro'yxat
+                    </button>
+                </div>
+
+                <!-- Mobile cart icon -->
+                <button
+                    class="md:hidden relative p-2 rounded-xl hover:bg-gray-100 transition"
+                >
+                    <svg
+                        class="w-5 h-5 text-dark"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
+                        />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand rounded-full"
+                    ></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ══════════════════════════════════
+     HERO TEXT
+══════════════════════════════════ -->
+        <section class="max-w-6xl mx-auto px-4 md:px-6 pt-7 pb-4">
+            <p
+                class="text-2xl md:text-3xl font-extrabold text-dark leading-tight"
+            >
+                Eng yaxshi taomlar
+                <a
+                    href="#"
+                    class="text-brand underline underline-offset-2 decoration-brand/40"
+                    >siz uchun</a
+                >
+            </p>
+            <p class="text-sm text-gray-400 mt-1">
+                Sevimli restoranlaringizdan tez va mazali yetkazib berish
+                xizmati.
+            </p>
+        </section>
+
+        <!-- ══════════════════════════════════
+     CATEGORIES
+══════════════════════════════════ -->
+        <section class="max-w-6xl mx-auto px-4 md:px-6 pb-5">
+            <div class="cats flex items-center gap-2 pb-1">
+                <button
+                    class="flex items-center gap-1.5 bg-brand text-white px-4 py-2 rounded-full text-sm font-bold shrink-0 shadow-sm"
+                >
+                    <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        viewBox="0 0 24 24"
+                    >
+                        <line x1="8" y1="6" x2="21" y2="6" />
+                        <line x1="8" y1="12" x2="21" y2="12" />
+                        <line x1="8" y1="18" x2="21" y2="18" />
+                        <line x1="3" y1="6" x2="3.01" y2="6" />
+                        <line x1="3" y1="12" x2="3.01" y2="12" />
+                        <line x1="3" y1="18" x2="3.01" y2="18" />
+                    </svg>
+                    Barchasi
+                </button>
+                <button
+                    class="flex items-center gap-1.5 bg-white border border-gray-200 text-dark px-4 py-2 rounded-full text-sm font-semibold shrink-0 hover:border-brand hover:text-brand transition"
+                >
+                    <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 8v4l3 3" />
+                    </svg>
+                    Pizza
+                </button>
+                <button
+                    class="flex items-center gap-1.5 bg-white border border-gray-200 text-dark px-4 py-2 rounded-full text-sm font-semibold shrink-0 hover:border-brand hover:text-brand transition"
+                >
+                    <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                    </svg>
+                    Burger
+                </button>
+                <button
+                    class="flex items-center gap-1.5 bg-white border border-gray-200 text-dark px-4 py-2 rounded-full text-sm font-semibold shrink-0 hover:border-brand hover:text-brand transition"
+                >
+                    <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M3 3h18v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V3z" />
+                        <path d="M3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5" />
+                    </svg>
+                    Milliy taomlar
+                </button>
+                <button
+                    class="flex items-center gap-1.5 bg-white border border-gray-200 text-dark px-4 py-2 rounded-full text-sm font-semibold shrink-0 hover:border-brand hover:text-brand transition"
+                >
+                    <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+                    </svg>
+                    Shrinliklar
+                </button>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════
+     FOOD GRID — Ommabop taomlar
+══════════════════════════════════ -->
+        <section class="max-w-6xl mx-auto px-4 md:px-6 pb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-bold text-dark">Ommabop taomlar</h2>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
+                    >
+                        <svg
+                            class="w-4 h-4 text-gray-500"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <line x1="4" y1="6" x2="20" y2="6" />
+                            <line x1="8" y1="12" x2="16" y2="12" />
+                            <line x1="11" y1="18" x2="13" y2="18" />
+                        </svg>
+                    </button>
+                    <a
+                        href="#"
+                        class="text-sm font-semibold text-brand hover:underline flex items-center gap-1"
+                    >
+                        Barchasini ko'rish
+                        <svg
+                            class="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="m9 18 6-6-6-6" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div
+                class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+            >
+                <!-- Food Card Macro -->
+                <!-- Card 1: Double Beef Burger -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-amber-200 via-orange-300 to-yellow-200 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 100"
+                                width="120"
+                                height="100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <ellipse
+                                    cx="60"
+                                    cy="82"
+                                    rx="45"
+                                    ry="8"
+                                    fill="#c8860a"
+                                    opacity=".3"
+                                />
+                                <!-- bun top -->
+                                <ellipse
+                                    cx="60"
+                                    cy="30"
+                                    rx="42"
+                                    ry="22"
+                                    fill="#d4740a"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="28"
+                                    rx="40"
+                                    ry="20"
+                                    fill="#e8850c"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="25"
+                                    rx="38"
+                                    ry="18"
+                                    fill="#f59520"
+                                />
+                                <!-- sesame -->
+                                <ellipse
+                                    cx="45"
+                                    cy="22"
+                                    rx="3"
+                                    ry="2"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="18"
+                                    rx="3"
+                                    ry="2"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <ellipse
+                                    cx="74"
+                                    cy="23"
+                                    rx="3"
+                                    ry="2"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <!-- lettuce -->
+                                <ellipse
+                                    cx="60"
+                                    cy="50"
+                                    rx="44"
+                                    ry="6"
+                                    fill="#4a8c2a"
+                                />
+                                <!-- cheese -->
+                                <rect
+                                    x="18"
+                                    y="53"
+                                    width="84"
+                                    height="7"
+                                    rx="2"
+                                    fill="#f0c040"
+                                />
+                                <!-- patty -->
+                                <rect
+                                    x="20"
+                                    y="58"
+                                    width="80"
+                                    height="12"
+                                    rx="6"
+                                    fill="#7a3a10"
+                                />
+                                <rect
+                                    x="22"
+                                    y="60"
+                                    width="76"
+                                    height="8"
+                                    rx="5"
+                                    fill="#8b4513"
+                                />
+                                <!-- patty 2 -->
+                                <rect
+                                    x="20"
+                                    y="68"
+                                    width="80"
+                                    height="10"
+                                    rx="5"
+                                    fill="#7a3a10"
+                                />
+                                <!-- bun bottom -->
+                                <ellipse
+                                    cx="60"
+                                    cy="79"
+                                    rx="42"
+                                    ry="10"
+                                    fill="#e8850c"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="77"
+                                    rx="40"
+                                    ry="8"
+                                    fill="#f59520"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.9
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Double Beef Burger
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            BurgerKing
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >45,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Margherita Classic -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-red-100 via-yellow-100 to-orange-100 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 100"
+                                width="120"
+                                height="100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <!-- pizza base -->
+                                <circle cx="60" cy="55" r="44" fill="#e8c44a" />
+                                <circle cx="60" cy="55" r="38" fill="#d45a1a" />
+                                <!-- cheese blobs -->
+                                <circle
+                                    cx="52"
+                                    cy="50"
+                                    r="10"
+                                    fill="#f5d84a"
+                                    opacity=".9"
+                                />
+                                <circle
+                                    cx="70"
+                                    cy="48"
+                                    r="9"
+                                    fill="#f5d84a"
+                                    opacity=".9"
+                                />
+                                <circle
+                                    cx="58"
+                                    cy="63"
+                                    r="8"
+                                    fill="#f5d84a"
+                                    opacity=".9"
+                                />
+                                <circle
+                                    cx="42"
+                                    cy="62"
+                                    r="7"
+                                    fill="#f5d84a"
+                                    opacity=".9"
+                                />
+                                <circle
+                                    cx="74"
+                                    cy="64"
+                                    r="8"
+                                    fill="#f5d84a"
+                                    opacity=".85"
+                                />
+                                <!-- basil -->
+                                <ellipse
+                                    cx="48"
+                                    cy="44"
+                                    rx="5"
+                                    ry="7"
+                                    fill="#2a8a2a"
+                                    transform="rotate(-20 48 44)"
+                                />
+                                <ellipse
+                                    cx="68"
+                                    cy="58"
+                                    rx="5"
+                                    ry="7"
+                                    fill="#2a8a2a"
+                                    transform="rotate(15 68 58)"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="72"
+                                    rx="5"
+                                    ry="7"
+                                    fill="#2a8a2a"
+                                    transform="rotate(-10 60 72)"
+                                />
+                                <!-- crust -->
+                                <circle
+                                    cx="60"
+                                    cy="55"
+                                    r="44"
+                                    fill="none"
+                                    stroke="#c8860a"
+                                    stroke-width="7"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.9
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Margherita Classic
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            Bella Italia
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >72,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Salmon Poke Bowl -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-teal-100 via-green-100 to-emerald-100 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 110"
+                                width="120"
+                                height="110"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <!-- bowl -->
+                                <ellipse
+                                    cx="60"
+                                    cy="80"
+                                    rx="50"
+                                    ry="18"
+                                    fill="#c8b090"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="65"
+                                    rx="50"
+                                    ry="20"
+                                    fill="#e8d4b0"
+                                />
+                                <!-- rice -->
+                                <ellipse
+                                    cx="60"
+                                    cy="63"
+                                    rx="44"
+                                    ry="16"
+                                    fill="#f5f0e0"
+                                />
+                                <!-- salmon slices -->
+                                <ellipse
+                                    cx="42"
+                                    cy="52"
+                                    rx="14"
+                                    ry="8"
+                                    fill="#f07040"
+                                    transform="rotate(-15 42 52)"
+                                />
+                                <ellipse
+                                    cx="56"
+                                    cy="48"
+                                    rx="13"
+                                    ry="7"
+                                    fill="#e86030"
+                                    transform="rotate(-10 56 48)"
+                                />
+                                <ellipse
+                                    cx="70"
+                                    cy="51"
+                                    rx="12"
+                                    ry="7"
+                                    fill="#f07840"
+                                    transform="rotate(10 70 51)"
+                                />
+                                <!-- avocado -->
+                                <ellipse
+                                    cx="35"
+                                    cy="65"
+                                    rx="9"
+                                    ry="12"
+                                    fill="#5a9a30"
+                                    transform="rotate(-20 35 65)"
+                                />
+                                <ellipse
+                                    cx="35"
+                                    cy="65"
+                                    rx="5"
+                                    ry="8"
+                                    fill="#8ac040"
+                                    transform="rotate(-20 35 65)"
+                                />
+                                <circle cx="35" cy="67" r="3" fill="#c8a060" />
+                                <!-- egg -->
+                                <circle cx="82" cy="58" r="11" fill="#fff9e0" />
+                                <circle cx="82" cy="58" r="7" fill="#f5c040" />
+                                <!-- cucumber -->
+                                <ellipse
+                                    cx="74"
+                                    cy="72"
+                                    rx="8"
+                                    ry="5"
+                                    fill="#6abf50"
+                                    transform="rotate(20 74 72)"
+                                />
+                                <ellipse
+                                    cx="85"
+                                    cy="70"
+                                    rx="7"
+                                    ry="4.5"
+                                    fill="#6abf50"
+                                    transform="rotate(10 85 70)"
+                                />
+                                <!-- greens -->
+                                <ellipse
+                                    cx="48"
+                                    cy="72"
+                                    rx="6"
+                                    ry="4"
+                                    fill="#2a8a2a"
+                                    opacity=".8"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.7
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Salmon Poke Bowl
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            Green &amp; Fresh
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >68,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Premium Ribeye Steak -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-stone-200 via-amber-100 to-stone-300 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 100"
+                                width="120"
+                                height="100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <ellipse
+                                    cx="60"
+                                    cy="85"
+                                    rx="48"
+                                    ry="8"
+                                    fill="#8b4513"
+                                    opacity=".2"
+                                />
+                                <!-- steak shape -->
+                                <path
+                                    d="M25 65 Q15 45 30 30 Q50 12 80 18 Q105 22 108 45 Q112 65 95 75 Q75 85 50 80 Z"
+                                    fill="#8b2500"
+                                />
+                                <path
+                                    d="M28 63 Q18 44 33 30 Q52 14 80 20 Q104 24 106 45 Q110 63 94 73 Q74 82 51 78 Z"
+                                    fill="#a02a00"
+                                />
+                                <!-- fat marbling -->
+                                <path
+                                    d="M50 30 Q60 35 70 30 Q75 40 65 45 Q55 42 50 30Z"
+                                    fill="#f5e8d0"
+                                    opacity=".6"
+                                />
+                                <path
+                                    d="M35 50 Q42 48 45 55 Q38 60 35 50Z"
+                                    fill="#f5e8d0"
+                                    opacity=".5"
+                                />
+                                <path
+                                    d="M75 55 Q82 52 85 60 Q79 65 75 55Z"
+                                    fill="#f5e8d0"
+                                    opacity=".5"
+                                />
+                                <!-- grill marks -->
+                                <line
+                                    x1="40"
+                                    y1="38"
+                                    x2="90"
+                                    y2="32"
+                                    stroke="#5a1500"
+                                    stroke-width="3"
+                                    opacity=".5"
+                                />
+                                <line
+                                    x1="36"
+                                    y1="50"
+                                    x2="95"
+                                    y2="44"
+                                    stroke="#5a1500"
+                                    stroke-width="3"
+                                    opacity=".5"
+                                />
+                                <line
+                                    x1="34"
+                                    y1="62"
+                                    x2="92"
+                                    y2="58"
+                                    stroke="#5a1500"
+                                    stroke-width="2.5"
+                                    opacity=".4"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 5.0
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Premium Ribeye Steak
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            The Grill House
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >125,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Dragon Sushi Set -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-slate-800 via-gray-900 to-slate-700 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 90"
+                                width="120"
+                                height="90"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <!-- plate -->
+                                <ellipse
+                                    cx="60"
+                                    cy="78"
+                                    rx="54"
+                                    ry="10"
+                                    fill="#1a1a1a"
+                                    opacity=".4"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="72"
+                                    rx="54"
+                                    ry="12"
+                                    fill="#2a2a2a"
+                                />
+                                <!-- sushi pieces -->
+                                <!-- piece 1 -->
+                                <rect
+                                    x="15"
+                                    y="48"
+                                    width="20"
+                                    height="24"
+                                    rx="6"
+                                    fill="#f5f0e0"
+                                />
+                                <rect
+                                    x="15"
+                                    y="42"
+                                    width="20"
+                                    height="14"
+                                    rx="5"
+                                    fill="#e86030"
+                                />
+                                <!-- piece 2 -->
+                                <rect
+                                    x="40"
+                                    y="46"
+                                    width="20"
+                                    height="26"
+                                    rx="6"
+                                    fill="#f5f0e0"
+                                />
+                                <rect
+                                    x="40"
+                                    y="40"
+                                    width="20"
+                                    height="14"
+                                    rx="5"
+                                    fill="#f07040"
+                                />
+                                <!-- piece 3 -->
+                                <rect
+                                    x="65"
+                                    y="48"
+                                    width="20"
+                                    height="24"
+                                    rx="6"
+                                    fill="#f5f0e0"
+                                />
+                                <rect
+                                    x="65"
+                                    y="42"
+                                    width="20"
+                                    height="14"
+                                    rx="5"
+                                    fill="#2a6a2a"
+                                />
+                                <!-- piece 4 -->
+                                <rect
+                                    x="88"
+                                    y="46"
+                                    width="20"
+                                    height="26"
+                                    rx="6"
+                                    fill="#f5f0e0"
+                                />
+                                <rect
+                                    x="88"
+                                    y="40"
+                                    width="20"
+                                    height="14"
+                                    rx="5"
+                                    fill="#c03030"
+                                />
+                                <!-- nori band -->
+                                <rect
+                                    x="15"
+                                    y="55"
+                                    width="20"
+                                    height="5"
+                                    rx="1"
+                                    fill="#1a1a1a"
+                                    opacity=".7"
+                                />
+                                <rect
+                                    x="40"
+                                    y="55"
+                                    width="20"
+                                    height="5"
+                                    rx="1"
+                                    fill="#1a1a1a"
+                                    opacity=".7"
+                                />
+                                <rect
+                                    x="65"
+                                    y="55"
+                                    width="20"
+                                    height="5"
+                                    rx="1"
+                                    fill="#1a1a1a"
+                                    opacity=".7"
+                                />
+                                <rect
+                                    x="88"
+                                    y="55"
+                                    width="20"
+                                    height="5"
+                                    rx="1"
+                                    fill="#1a1a1a"
+                                    opacity=".7"
+                                />
+                                <!-- wasabi / ginger -->
+                                <ellipse
+                                    cx="18"
+                                    cy="36"
+                                    rx="8"
+                                    ry="5"
+                                    fill="#5a9a30"
+                                    opacity=".9"
+                                />
+                                <ellipse
+                                    cx="32"
+                                    cy="33"
+                                    rx="6"
+                                    ry="4"
+                                    fill="#f0a0a0"
+                                    opacity=".8"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.5
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Dragon Sushi Set
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            Tokyo Express
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >95,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Toshkent Oshi -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-yellow-100 via-amber-50 to-orange-100 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 100"
+                                width="120"
+                                height="100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <!-- bowl shadow -->
+                                <ellipse
+                                    cx="60"
+                                    cy="90"
+                                    rx="44"
+                                    ry="7"
+                                    fill="#c8a060"
+                                    opacity=".3"
+                                />
+                                <!-- bowl -->
+                                <path
+                                    d="M16 55 Q16 90 60 90 Q104 90 104 55 Z"
+                                    fill="#d4a070"
+                                />
+                                <path
+                                    d="M16 55 Q16 86 60 86 Q104 86 104 55 Z"
+                                    fill="#e8b880"
+                                />
+                                <!-- rice -->
+                                <ellipse
+                                    cx="60"
+                                    cy="54"
+                                    rx="44"
+                                    ry="14"
+                                    fill="#f5f0d0"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="50"
+                                    rx="40"
+                                    ry="12"
+                                    fill="#faf5e0"
+                                />
+                                <!-- carrot shreds -->
+                                <path
+                                    d="M35 44 Q42 36 50 44"
+                                    stroke="#f08020"
+                                    stroke-width="3"
+                                    fill="none"
+                                />
+                                <path
+                                    d="M38 47 Q45 39 53 47"
+                                    stroke="#e87010"
+                                    stroke-width="2.5"
+                                    fill="none"
+                                />
+                                <!-- meat pieces -->
+                                <ellipse
+                                    cx="72"
+                                    cy="42"
+                                    rx="10"
+                                    ry="7"
+                                    fill="#8b4513"
+                                    transform="rotate(-10 72 42)"
+                                />
+                                <ellipse
+                                    cx="82"
+                                    cy="48"
+                                    rx="8"
+                                    ry="6"
+                                    fill="#7a3a10"
+                                    transform="rotate(15 82 48)"
+                                />
+                                <!-- raisins -->
+                                <circle cx="55" cy="42" r="3" fill="#4a2a1a" />
+                                <circle
+                                    cx="63"
+                                    cy="38"
+                                    r="2.5"
+                                    fill="#4a2a1a"
+                                />
+                                <circle
+                                    cx="48"
+                                    cy="46"
+                                    r="2.5"
+                                    fill="#4a2a1a"
+                                />
+                                <!-- garlic head -->
+                                <ellipse
+                                    cx="88"
+                                    cy="38"
+                                    rx="7"
+                                    ry="9"
+                                    fill="#f5f0e0"
+                                />
+                                <line
+                                    x1="88"
+                                    y1="30"
+                                    x2="88"
+                                    y2="28"
+                                    stroke="#8a8060"
+                                    stroke-width="1.5"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.7
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Toshkent Oshi
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            Milliy Taomlar
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >26,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7: Anosiy Kabob -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-red-800 via-red-700 to-rose-900 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 100"
+                                width="120"
+                                height="100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <!-- flatbread -->
+                                <ellipse
+                                    cx="60"
+                                    cy="75"
+                                    rx="46"
+                                    ry="14"
+                                    fill="#f0d090"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="70"
+                                    rx="44"
+                                    ry="13"
+                                    fill="#f5dca0"
+                                />
+                                <!-- filling -->
+                                <ellipse
+                                    cx="60"
+                                    cy="62"
+                                    rx="36"
+                                    ry="10"
+                                    fill="#8b4513"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="60"
+                                    rx="34"
+                                    ry="9"
+                                    fill="#a05018"
+                                />
+                                <!-- onion rings -->
+                                <ellipse
+                                    cx="45"
+                                    cy="55"
+                                    rx="8"
+                                    ry="4"
+                                    fill="#f5f0d0"
+                                    opacity=".8"
+                                    transform="rotate(-10 45 55)"
+                                />
+                                <ellipse
+                                    cx="62"
+                                    cy="52"
+                                    rx="8"
+                                    ry="4"
+                                    fill="#f5f0d0"
+                                    opacity=".8"
+                                />
+                                <ellipse
+                                    cx="78"
+                                    cy="56"
+                                    rx="7"
+                                    ry="4"
+                                    fill="#f5f0d0"
+                                    opacity=".7"
+                                    transform="rotate(10 78 56)"
+                                />
+                                <!-- herbs -->
+                                <ellipse
+                                    cx="40"
+                                    cy="62"
+                                    rx="5"
+                                    ry="3"
+                                    fill="#4a8a20"
+                                    opacity=".9"
+                                />
+                                <ellipse
+                                    cx="80"
+                                    cy="60"
+                                    rx="4"
+                                    ry="3"
+                                    fill="#4a8a20"
+                                    opacity=".9"
+                                />
+                                <!-- wrapped part -->
+                                <path
+                                    d="M20 68 Q22 52 60 48 Q98 52 100 68 Q80 78 60 78 Q40 78 20 68Z"
+                                    fill="#f0d090"
+                                    opacity=".5"
+                                />
+                                <!-- safe work label area -->
+                                <rect
+                                    x="30"
+                                    y="28"
+                                    width="60"
+                                    height="22"
+                                    rx="6"
+                                    fill="white"
+                                    opacity=".15"
+                                />
+                                <text
+                                    x="60"
+                                    y="43"
+                                    text-anchor="middle"
+                                    font-family="sans-serif"
+                                    font-size="9"
+                                    fill="white"
+                                    font-weight="bold"
+                                    opacity=".9"
+                                >
+                                    Safe work
+                                </text>
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.6
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Anosiy Kabob
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            Shashlik Uz
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >18,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8: Cheese Burger -->
+                <div
+                    class="food-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+                >
+                    <div class="relative overflow-hidden" style="height: 140px">
+                        <div
+                            class="food-img w-full h-full bg-gradient-to-br from-gray-900 via-slate-800 to-gray-700 flex items-center justify-center"
+                        >
+                            <svg
+                                viewBox="0 0 120 100"
+                                width="120"
+                                height="100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <ellipse
+                                    cx="60"
+                                    cy="87"
+                                    rx="45"
+                                    ry="8"
+                                    fill="#1a1a1a"
+                                    opacity=".4"
+                                />
+                                <!-- bun top with sesame -->
+                                <path
+                                    d="M18 40 Q18 14 60 14 Q102 14 102 40 Z"
+                                    fill="#d4740a"
+                                />
+                                <path
+                                    d="M18 40 Q18 17 60 17 Q102 17 102 40 Z"
+                                    fill="#e8850c"
+                                />
+                                <ellipse
+                                    cx="45"
+                                    cy="22"
+                                    rx="3"
+                                    ry="2"
+                                    fill="#fff"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="18"
+                                    rx="3.5"
+                                    ry="2"
+                                    fill="#fff"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="75"
+                                    cy="22"
+                                    rx="3"
+                                    ry="2"
+                                    fill="#fff"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="52"
+                                    cy="28"
+                                    rx="2.5"
+                                    ry="1.5"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <ellipse
+                                    cx="70"
+                                    cy="27"
+                                    rx="2.5"
+                                    ry="1.5"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <!-- tomato / lettuce peek -->
+                                <rect
+                                    x="16"
+                                    y="48"
+                                    width="88"
+                                    height="8"
+                                    rx="2"
+                                    fill="#c83030"
+                                    opacity=".8"
+                                />
+                                <rect
+                                    x="14"
+                                    y="54"
+                                    width="92"
+                                    height="6"
+                                    rx="2"
+                                    fill="#4a8c2a"
+                                />
+                                <!-- cheese -->
+                                <rect
+                                    x="16"
+                                    y="58"
+                                    width="88"
+                                    height="7"
+                                    rx="2"
+                                    fill="#f0c040"
+                                />
+                                <!-- patty -->
+                                <rect
+                                    x="18"
+                                    y="63"
+                                    width="84"
+                                    height="14"
+                                    rx="7"
+                                    fill="#7a3a10"
+                                />
+                                <rect
+                                    x="20"
+                                    y="65"
+                                    width="80"
+                                    height="10"
+                                    rx="6"
+                                    fill="#8b4513"
+                                />
+                                <!-- purple onion rings on patty -->
+                                <ellipse
+                                    cx="40"
+                                    cy="66"
+                                    rx="8"
+                                    ry="3"
+                                    fill="#8a2a8a"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="65"
+                                    cy="64"
+                                    rx="9"
+                                    ry="3"
+                                    fill="#8a2a8a"
+                                    opacity=".5"
+                                />
+                                <!-- bun bottom -->
+                                <ellipse
+                                    cx="60"
+                                    cy="80"
+                                    rx="44"
+                                    ry="10"
+                                    fill="#e8850c"
+                                />
+                                <ellipse
+                                    cx="60"
+                                    cy="78"
+                                    rx="42"
+                                    ry="8"
+                                    fill="#f59520"
+                                />
+                            </svg>
+                        </div>
+                        <div
+                            class="rating-badge absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold text-dark"
+                        >
+                            ⭐ 4.5
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p
+                            class="font-bold text-dark text-sm leading-tight mb-0.5"
+                        >
+                            Cheese Burger
+                        </p>
+                        <p
+                            class="text-xs text-gray-400 flex items-center gap-1 mb-2.5"
+                        >
+                            <svg
+                                class="w-3 h-3 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                            </svg>
+                            MaxWay
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-extrabold text-brand"
+                                >28,000 UZS</span
+                            >
+                            <button
+                                class="btn-order bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:opacity-90 transition"
+                            >
+                                Buyurtma qilish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════
+     PROMO BANNER
+══════════════════════════════════ -->
+        <section class="max-w-6xl mx-auto px-4 md:px-6 pb-10">
+            <div class="promo-bg rounded-3xl overflow-hidden relative">
+                <div
+                    class="flex flex-col md:flex-row items-center md:items-stretch min-h-[200px]"
+                >
+                    <!-- Left content -->
+                    <div class="flex-1 px-7 py-8 md:py-10 relative z-10">
+                        <span
+                            class="inline-block bg-brand text-white text-[11px] font-bold px-3 py-1 rounded-full mb-3"
+                            >Maxsus Taklif</span
+                        >
+                        <h3
+                            class="text-xl md:text-2xl font-extrabold text-dark leading-snug mb-2"
+                        >
+                            Ilk buyurtmangiz uchun 20% chegirma!
+                        </h3>
+                        <p
+                            class="text-sm text-gray-600 mb-5 max-w-xs leading-relaxed"
+                        >
+                            Ilovamizni yuklab oling va istalgan restoranlardan
+                            ilk bo'lib buyurtma beganingizda maxsus chegirimaga
+                            ega bo'ling.
+                        </p>
+                        <button
+                            class="bg-dark text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-gray-800 transition shadow-md"
+                        >
+                            Chegimani olish
+                        </button>
+                    </div>
+
+                    <!-- Right burger image (decorative) -->
+                    <div
+                        class="relative md:w-64 flex items-end justify-center px-4 pb-0 md:pb-0 overflow-hidden"
+                    >
+                        <div class="relative" style="margin-bottom: -10px">
+                            <svg
+                                viewBox="0 0 200 200"
+                                width="200"
+                                height="200"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <!-- shadow -->
+                                <ellipse
+                                    cx="100"
+                                    cy="190"
+                                    rx="75"
+                                    ry="14"
+                                    fill="#1a8a5a"
+                                    opacity=".2"
+                                />
+                                <!-- bun top big -->
+                                <path
+                                    d="M15 90 Q10 30 100 20 Q190 30 185 90 Z"
+                                    fill="#c4680a"
+                                />
+                                <path
+                                    d="M15 90 Q10 33 100 23 Q190 33 185 90 Z"
+                                    fill="#d4780c"
+                                />
+                                <path
+                                    d="M18 90 Q13 38 100 28 Q187 38 182 90 Z"
+                                    fill="#e8900e"
+                                />
+                                <!-- sesame seeds -->
+                                <ellipse
+                                    cx="65"
+                                    cy="38"
+                                    rx="5"
+                                    ry="3"
+                                    fill="#fff"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="100"
+                                    cy="30"
+                                    rx="6"
+                                    ry="3.5"
+                                    fill="#fff"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="135"
+                                    cy="38"
+                                    rx="5"
+                                    ry="3"
+                                    fill="#fff"
+                                    opacity=".6"
+                                />
+                                <ellipse
+                                    cx="80"
+                                    cy="52"
+                                    rx="4"
+                                    ry="2.5"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <ellipse
+                                    cx="122"
+                                    cy="50"
+                                    rx="4"
+                                    ry="2.5"
+                                    fill="#fff"
+                                    opacity=".5"
+                                />
+                                <!-- lettuce -->
+                                <rect
+                                    x="12"
+                                    y="98"
+                                    width="176"
+                                    height="12"
+                                    rx="4"
+                                    fill="#3a8a1a"
+                                />
+                                <!-- tomato -->
+                                <rect
+                                    x="14"
+                                    y="108"
+                                    width="172"
+                                    height="10"
+                                    rx="3"
+                                    fill="#d03020"
+                                    opacity=".85"
+                                />
+                                <!-- cheese layer -->
+                                <rect
+                                    x="12"
+                                    y="116"
+                                    width="176"
+                                    height="10"
+                                    rx="3"
+                                    fill="#f5c030"
+                                />
+                                <!-- patty 1 -->
+                                <rect
+                                    x="14"
+                                    y="124"
+                                    width="172"
+                                    height="18"
+                                    rx="9"
+                                    fill="#7a3000"
+                                />
+                                <rect
+                                    x="16"
+                                    y="126"
+                                    width="168"
+                                    height="14"
+                                    rx="8"
+                                    fill="#8b3a0a"
+                                />
+                                <!-- onion -->
+                                <rect
+                                    x="13"
+                                    y="140"
+                                    width="174"
+                                    height="8"
+                                    rx="3"
+                                    fill="#f0e8d0"
+                                    opacity=".7"
+                                />
+                                <!-- patty 2 -->
+                                <rect
+                                    x="14"
+                                    y="146"
+                                    width="172"
+                                    height="16"
+                                    rx="8"
+                                    fill="#7a3000"
+                                />
+                                <rect
+                                    x="16"
+                                    y="148"
+                                    width="168"
+                                    height="12"
+                                    rx="7"
+                                    fill="#8b3a0a"
+                                />
+                                <!-- bun bottom -->
+                                <ellipse
+                                    cx="100"
+                                    cy="170"
+                                    rx="88"
+                                    ry="18"
+                                    fill="#d4780c"
+                                />
+                                <ellipse
+                                    cx="100"
+                                    cy="168"
+                                    rx="84"
+                                    ry="14"
+                                    fill="#e8900e"
+                                />
+                            </svg>
+                        </div>
+                        <!-- glow -->
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-[#a0ddc4]/60 to-transparent pointer-events-none"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+        <footer class="bg-white border-t border-gray-100">
+            <div class="max-w-6xl mx-auto px-4 md:px-6 py-10">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                    <div class="col-span-2 md:col-span-1">
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <svg
+                                class="w-5 h-5 text-brand"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                            >
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path
+                                    d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+                                />
+                                <line x1="6" y1="1" x2="6" y2="4" />
+                                <line x1="10" y1="1" x2="10" y2="4" />
+                                <line x1="14" y1="1" x2="14" y2="4" />
+                            </svg>
+                            <span class="font-extrabold text-dark"
+                                >RestoBest</span
+                            >
+                        </div>
+                        <p class="text-sm text-gray-400 leading-relaxed mb-4">
+                            O'zbekistondagi restoranlarni band qilishning eng
+                            oson va zamonaviy usuli.
+                        </p>
+                        <div class="flex gap-2">
+                            <a
+                                href="#"
+                                class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-brand hover:text-brand transition text-gray-400"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                                    />
+                                </svg>
+                            </a>
+                            <a
+                                href="#"
+                                class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-brand hover:text-brand transition text-gray-400"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                                    />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-dark mb-3">
+                            Platforma
+                        </h4>
+                        <ul class="space-y-2">
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Biz haqimizda</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Restoranlar</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Hamkorlik</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Blog</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-dark mb-3">Yordam</h4>
+                        <ul class="space-y-2">
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Savollar (FAQ)</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Bog'lanish</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Qoidalar</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="#"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >Maxfiylik</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-dark mb-3">Aloqa</h4>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2">
+                                <svg
+                                    class="w-3.5 h-3.5 text-brand mt-0.5 shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                    />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <a
+                                    href="mailto:info@restobest.uz"
+                                    class="text-sm text-gray-400 hover:text-brand transition"
+                                    >info@restobest.uz</a
+                                >
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg
+                                    class="w-3.5 h-3.5 text-brand mt-0.5 shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12 19.79 19.79 0 0 1 1.07 3.4 2 2 0 0 1 3.06 1.25h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 5.94 5.94l1.25-1.25a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"
+                                    />
+                                </svg>
+                                <span class="text-sm text-gray-400"
+                                    >+998 71 123 45 67</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg
+                                    class="w-3.5 h-3.5 text-brand mt-0.5 shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                    />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg>
+                                <span class="text-sm text-gray-400"
+                                    >Toshkent sh, Mustaqillik ko'chasi</span
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div
+                    class="border-t border-gray-100 pt-5 text-center text-xs text-gray-400"
+                >
+                    © 2024 RestoBest. Barcha huquqlar himoyalangan.
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            function openDrawer() {
+                document.getElementById("drawer").classList.add("open");
+                document.getElementById("overlay").classList.add("open");
+                document.body.style.overflow = "hidden";
+            }
+            function closeDrawer() {
+                document.getElementById("drawer").classList.remove("open");
+                document.getElementById("overlay").classList.remove("open");
+                document.body.style.overflow = "";
+            }
+            window.addEventListener("resize", () => {
+                if (window.innerWidth >= 768) closeDrawer();
+            });
+        </script>
+    </body>
+</html>
