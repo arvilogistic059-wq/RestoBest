@@ -1,13 +1,15 @@
+
+
 const restaran = [
     {
         id: 1,
         name: "Olimp Garden",
         img: "https://d3fphkxyf5o5bm.cloudfront.net/image-resize/format=webp,w=720/Q524tReNnAnmuqp47ferJLphWDfCtQdzreu9DF17pR",
         address: {
-            viloyat: "Xorazm Urgench",
+            viloyat: "Toshkent",
             street: "Mashal yo'li 17-uy",
         },
-        category: "Milliy ovqat",
+        category: "Milliy",
         reyting: "4",
     },
     {
@@ -18,7 +20,7 @@ const restaran = [
             viloyat: "Xorazm  Urgench",
             street: "Shahar adliyasi yoni",
         },
-        category: "Milliy ovqat, sharq taomlari",
+        category: "Milliy",
         reyting: "5",
     },
     {
@@ -29,7 +31,7 @@ const restaran = [
             viloyat: "Xorazm",
             street: "MAN servis Ro'parasi",
         },
-        category: "Shaxsiy taom, Gamburg",
+        category: "Halol",
         reyting: "4.5",
     },
     {
@@ -40,68 +42,45 @@ const restaran = [
             viloyat: "Xorazm  Urgench",
             street: "Ko'xna Urganch ko'chasi",
         },
-        category: "Milliy ovqat  Italiyan  G'arb",
+        category: "G'arb",
         reyting: "4",
     },
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
-    const citySelect = document.getElementById("qidiruv");
-    const searchInput = document.getElementById("search-input");
-    const searchBtn = document.getElementById("search-btn");
+ 
 
-    const restaurants = [
-        { name: "Afsona Oshxona", city: "toshkent", food: "milliy" },
-        { name: "Steam Bar", city: "samarqand", food: "g'arb" },
-        { name: "Buxoro Choyxonasi", city: "buxoro", food: "sharq" },
-    ];
+// Categoriyalr uchun_____________________________________________________________________--
 
-    // function runSearch() {
-    //     if (!citySelect || !searchInput) return;
+const cates = [
+    { icon: "🏛️", name: "Milliy" },
+    { icon: "🍔", name: "Fast Food" },
+    { icon: "🍕", name: "G'arb" },
+    { icon: "🥗", name: "Vegetarian" },
+    { icon: "✅", name: "Halol" },
+    { icon: "☕", name: "Kafe" },
+    { icon: "🍣", name: "Sushi" },
+];
 
-    //     const cityValue = citySelect.value.toLowerCase().trim();
-    //     const searchValue = searchInput.value.toLowerCase().trim();
+const container = document.getElementById("Categories");
 
-    //     const results = restaurants.filter((item) => {
-    //         const cityMatch = cityValue ? item.city === cityValue : true;
-    //         const textMatch =
-    //             !searchValue ||
-    //             item.name.toLowerCase().includes(searchValue) ||
-    //             item.food.toLowerCase().includes(searchValue);
-    //         return cityMatch && textMatch;
-    //     });
 
-    //     if (!results.length) {
-    //         alert("Mos restoran topilmadi.");
-    //         return;
-    //     }
 
-    //     const names = results.map((r) => r.name).join(", ");
-    //     alert(`Topildi: ${names}`);
-    // }
-
-    if (searchBtn) searchBtn.addEventListener("click", runSearch);
-    if (searchInput) {
-        searchInput.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") runSearch();
-        });
-    }
-
-    function runSearch() {
-        if (!citySelect || !searchInput) return;
-
-        if (searchInput.value) {
-            viewRestaran(restaran)
-        }
-
-        const result = restaran.filter((item) =>
-            item.name.toLowerCase().includes(searchInput.value.toLowerCase()),
-        );
-
-        viewRestaran(result);
-    }
-});
-
+function filterRestaran(cates) {
+    cates.forEach((f) => {
+        const btn = document.createElement("button")
+        btn.className =" cat-pill flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gray-200 bg-white text-gray-700 text-sm font-semibold shadow-sm"
+        
+        btn.innerHTML = `${f.icon} ${f.name}`;
+        container.appendChild(btn)
+        btn.addEventListener("click", () => {
+            const filtered = restaran.filter((k) => k.category === f.name);
+             
+            viewRestaran(filtered)
+        })
+    })
+}
+filterRestaran(cates)
+// -----------------------------------------------------------------------------
 const all = document.getElementById("all");
 let count = 3;
 function viewRestaran(r) {
@@ -217,3 +196,46 @@ function viewRestaran(r) {
 }
 
 viewRestaran(restaran);
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const citySelect = document.getElementById("qidiruv");
+    const searchInput = document.getElementById("search-input");
+    const searchBtn = document.getElementById("search-btn");
+
+    const restaurants = [
+        { name: "Afsona Oshxona", city: "toshkent", food: "milliy" },
+        { name: "Steam Bar", city: "samarqand", food: "g'arb" },
+        { name: "Buxoro Choyxonasi", city: "buxoro", food: "sharq" },
+    ];
+
+    
+
+    if (searchBtn) searchBtn.addEventListener("click", runSearch);
+    if (searchInput) {
+        searchInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") runSearch();
+        });
+    }
+
+    function runSearch() {
+        if (!citySelect || !searchInput) return;
+
+        if (searchInput.value) {
+            viewRestaran(restaran);
+        }
+
+        const result = restaran.filter((item) =>
+            item.name.toLowerCase().includes(searchInput.value.toLowerCase()),
+        );
+
+        viewRestaran(result);
+    }
+});
+
+
+
+
